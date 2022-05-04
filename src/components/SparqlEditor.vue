@@ -185,29 +185,30 @@ export default {
 
 		/**
 		 * Overwriting Codemirrors anyhint autocompletion mode for SPARQL autocompletion.
+		 * Code for rewriting anyhint taken from https://stackoverflow.com/questions/19244449/codemirror-autocomplete-custom-list
 		 */
 		CodeMirror.hint.anyword = function (editor) {
-				//get cursor and current line
-				const cursor = editor.getCursor();
-				const currentLine = editor.getLine(cursor.line);
-				let start = cursor.ch;
-				let end = start;
-				//regex for matching keywords
-				const regex=/[\w.]/;
-				while (end < currentLine.length && regex.test(currentLine.charAt(end))) ++end;
-				while (start && regex.test(currentLine.charAt(start - 1))) --start;
-				const current = start !== end && currentLine.slice(start, end);
-				//return hints from original function or emptylist
-				const result = {list: []};
-				result.to=CodeMirror.Pos(cursor.line, end);
-				result.from=CodeMirror.Pos(cursor.line, start);
-				//push our matching keywords into hint list
-				keyWords.forEach(h=>{if (h.startsWith(current)) result.list.push(h);});
-				//removes duplicates
-				result.list = [...new Set(result.list)];
-				//sort list
-				result.list.sort();
-				return result;
+			//get cursor and current line
+			const cursor = editor.getCursor();
+			const currentLine = editor.getLine(cursor.line);
+			let start = cursor.ch;
+			let end = start;
+			//regex for matching keywords
+			const regex=/[\w.]/;
+			while (end < currentLine.length && regex.test(currentLine.charAt(end))) ++end;
+			while (start && regex.test(currentLine.charAt(start - 1))) --start;
+			const current = start !== end && currentLine.slice(start, end);
+			//return hints from original function or emptylist
+			const result = {list: []};
+			result.to=CodeMirror.Pos(cursor.line, end);
+			result.from=CodeMirror.Pos(cursor.line, start);
+			//push our matching keywords into hint list
+			keyWords.forEach(h=>{if (h.startsWith(current)) result.list.push(h);});
+			//removes duplicates
+			result.list = [...new Set(result.list)];
+			//sort list
+			result.list.sort();
+			return result;
 		};
 
 		/**
